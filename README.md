@@ -5,6 +5,7 @@ A comprehensive banking system implemented in Java with full functionality for a
 🏗️ Project Structure
 
 
+```
 BankingSystem/
 ├── Main.java                 # Entry point and user interface
 ├── BankingSystem.java        # Core banking operations
@@ -18,6 +19,7 @@ BankingSystem/
     ├── customers.txt         # Customer and account data
     └── transactions.txt      # Transaction history
 🚀 Features
+```
 
 Admin Features
 - **Secure Login**: Admin authentication with password protection

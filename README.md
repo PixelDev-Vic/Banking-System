@@ -1,4 +1,4 @@
-# CvSU Banking System
+# Banking System
 
 A comprehensive console-based banking system developed in Java. This system provides both administrative and customer interfaces for managing bank accounts and transactions.
 

@@ -1,72 +1,17 @@
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.nio.charset.StandardCharsets;
-
 public class Customer {
     private String name;
-    private String passwordHash;
+    private String pin;
     private Account account;
-    private int failedLoginAttempts;
-    private boolean accountLocked;
 
-    public Customer(String name, String password, Account account) {
+    public Customer(String name, String pin, Account account) {
         this.name = name;
-        this.passwordHash = hashPassword(password);
+        this.pin = pin;
         this.account = account;
-        this.failedLoginAttempts = 0;
-        this.accountLocked = false;
     }
 
-    // Constructor for loading from file
-    public Customer(String name, String passwordHash, Account account, int failedAttempts, boolean locked) {
-        this.name = name;
-        this.passwordHash = passwordHash;
-        this.account = account;
-        this.failedLoginAttempts = failedAttempts;
-        this.accountLocked = locked;
-    }
-
-    public boolean validatePassword(String password) {
-        if (accountLocked) {
-            return false;
-        }
-
-        if (hashPassword(password).equals(passwordHash)) {
-            failedLoginAttempts = 0;
-            return true;
-        } else {
-            failedLoginAttempts++;
-            if (failedLoginAttempts >= 3) {
-                accountLocked = true;
-                System.out.println("Account locked due to multiple failed login attempts.");
-            }
-            return false;
-        }
-    }
-
-    private String hashPassword(String password) {
-        try {
-            MessageDigest digest = MessageDigest.getInstance("SHA-256");
-            byte[] hash = digest.digest(password.getBytes(StandardCharsets.UTF_8));
-            StringBuilder hexString = new StringBuilder();
-
-            for (byte b : hash) {
-                String hex = Integer.toHexString(0xff & b);
-                if (hex.length() == 1) {
-                    hexString.append('0');
-                }
-                hexString.append(hex);
-            }
-
-            return hexString.toString();
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException("SHA-256 algorithm not available", e);
-        }
-    }
-
-    public void unlockAccount() {
-        this.accountLocked = false;
-        this.failedLoginAttempts = 0;
+    // Validate PIN (4 digits)
+    public boolean validatePin(String inputPin) {
+        return this.pin != null && this.pin.equals(inputPin);
     }
 
     // Getters and setters
@@ -78,8 +23,17 @@ public class Customer {
         this.name = name;
     }
 
-    public String getPasswordHash() {
-        return passwordHash;
+    public String getPin() {
+        return pin;
+    }
+
+    public void setPin(String pin) {
+        // Validate PIN format before setting
+        if (pin != null && pin.matches("\\d{4}")) {
+            this.pin = pin;
+        } else {
+            throw new IllegalArgumentException("PIN must be exactly 4 digits");
+        }
     }
 
     public Account getAccount() {
@@ -90,25 +44,11 @@ public class Customer {
         this.account = account;
     }
 
-    public int getFailedLoginAttempts() {
-        return failedLoginAttempts;
-    }
-
-    public void setFailedLoginAttempts(int failedLoginAttempts) {
-        this.failedLoginAttempts = failedLoginAttempts;
-    }
-
-    public boolean isAccountLocked() {
-        return accountLocked;
-    }
-
-    public void setAccountLocked(boolean accountLocked) {
-        this.accountLocked = accountLocked;
-    }
-
     @Override
     public String toString() {
-        return String.format("Customer{name='%s', account=%s, locked=%s}",
-                name, account.getAccountNumber(), accountLocked);
+        return "Customer{" +
+                "name='" + name + '\'' +
+                ", account=" + account +
+                '}';
     }
 }

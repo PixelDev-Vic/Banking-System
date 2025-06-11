@@ -1,475 +1,512 @@
 import java.util.Scanner;
-import java.util.InputMismatchException;
 
 public class Main {
-    private static Scanner scanner = new Scanner(System.in);
     private static BankingSystem bankingSystem = new BankingSystem();
+    private static Scanner scanner = new Scanner(System.in);
 
     public static void main(String[] args) {
-        System.out.println("=== Welcome to Java Banking System ===");
+        System.out.println("=".repeat(50));
+        System.out.println("    WELCOME TO CAVITE STATE UNIVERSITY");
+        System.out.println("           BANKING SYSTEM");
+        System.out.println("=".repeat(50));
 
         while (true) {
             showMainMenu();
-            int choice = getValidIntInput();
+            int choice = getIntInput("Choose an option: ");
 
             switch (choice) {
                 case 1:
-                    adminLogin();
+                    adminInterface();
                     break;
                 case 2:
-                    customerMenu();
+                    customerInterface();
                     break;
                 case 3:
-                    System.out.println("Thank you for using Java Banking System!");
+                    System.out.println("\nThank you for using CvSU Banking System!");
+                    System.out.println("Goodbye!");
                     System.exit(0);
                     break;
                 default:
-                    System.out.println("Invalid choice. Please try again.");
+                    System.out.println("Invalid option! Please try again.");
             }
         }
     }
 
     private static void showMainMenu() {
-        System.out.println("\n=== MAIN MENU ===");
+        System.out.println("\n" + "=".repeat(40));
+        System.out.println("           MAIN MENU");
+        System.out.println("=".repeat(40));
         System.out.println("1. Admin Login");
-        System.out.println("2. Customer Menu");
+        System.out.println("2. Customer Interface");
         System.out.println("3. Exit");
-        System.out.print("Choose an option: ");
+        System.out.println("=".repeat(40));
     }
 
-    private static void adminLogin() {
-        while (true) {
-            System.out.println("\n=== ADMIN LOGIN ===");
-            System.out.println("1. Enter Password");
-            System.out.println("2. Back to Main Menu");
-            System.out.print("Choose an option: ");
+    private static void adminInterface() {
+        System.out.println("\n=== ADMIN LOGIN ===");
+        String password = getStringInputWithBack("Enter admin password (or type 'back' to return): ");
+        if (password == null) return; // User chose to go back
 
-            int choice = getValidIntInput();
-
-            switch (choice) {
-                case 1:
-                    System.out.print("Enter admin password: ");
-                    String password = scanner.nextLine();
-
-                    if (bankingSystem.adminLogin(password)) {
-                        adminMenu();
-                        return;
-                    } else {
-                        System.out.println("Invalid admin password!");
-                    }
-                    break;
-                case 2:
-                    return;
-                default:
-                    System.out.println("Invalid choice. Please try again.");
-            }
+        if (bankingSystem.adminLogin(password)) {
+            System.out.println("Admin login successful!");
+            adminMenu();
+        } else {
+            System.out.println("Invalid admin password!");
         }
     }
 
     private static void adminMenu() {
         while (true) {
-            System.out.println("\n=== ADMIN MENU ===");
-            System.out.println("1. Create Customer Account");
-            System.out.println("2. View All Customers");
-            System.out.println("3. View All Transactions");
+            System.out.println("\n" + "=".repeat(40));
+            System.out.println("          ADMIN MENU");
+            System.out.println("=".repeat(40));
+            System.out.println("1. View All Customers");
+            System.out.println("2. View All Transactions");
+            System.out.println("3. Create Customer Account");
             System.out.println("4. Delete Customer Account");
-            System.out.println("5. Suspend/Activate Account");
-            System.out.println("6. Back to Main Menu");
-            System.out.print("Choose an option: ");
+            System.out.println("5. Toggle Account Status");
+            System.out.println("6. View Customer Transaction History");
+            System.out.println("7. System Statistics");
+            System.out.println("8. Logout");
+            System.out.println("=".repeat(40));
 
-            int choice = getValidIntInput();
+            int choice = getIntInput("Choose an option: ");
 
             switch (choice) {
                 case 1:
-                    createCustomerAccount();
-                    break;
-                case 2:
                     bankingSystem.viewAllCustomers();
                     break;
-                case 3:
+                case 2:
                     bankingSystem.viewAllTransactions();
                     break;
+                case 3:
+                    adminCreateAccount();
+                    break;
                 case 4:
-                    deleteCustomerAccount();
+                    adminDeleteAccount();
                     break;
                 case 5:
-                    toggleAccountStatus();
+                    adminToggleStatus();
                     break;
                 case 6:
+                    adminViewTransactionHistory();
+                    break;
+                case 7:
+                    showSystemStatistics();
+                    break;
+                case 8:
+                    System.out.println("Admin logged out successfully!");
                     return;
                 default:
-                    System.out.println("Invalid choice. Please try again.");
+                    System.out.println("Invalid option! Please try again.");
             }
         }
     }
 
-    private static void createCustomerAccount() {
-        System.out.print("Enter customer name: ");
-        String name = scanner.nextLine();
+    private static void adminCreateAccount() {
+        System.out.println("\n=== CREATE CUSTOMER ACCOUNT (ADMIN) ===");
+        System.out.println("(Type 'back' at any prompt to return to admin menu)");
 
-        System.out.print("Enter password: ");
-        String password = scanner.nextLine();
+        String name = getStringInputWithBack("Enter customer name: ");
+        if (name == null) return;
 
-        System.out.println("Select Account Type:");
-        System.out.println("1. Savings Account");
-        System.out.println("2. Current Account");
-        System.out.println("3. Cancel");
-        System.out.print("Choice: ");
-        int typeChoice = getValidIntInput();
+        String pin = null;
+        while (pin == null) {
+            String inputPin = getStringInputWithBack("Enter 4-digit PIN for customer: ");
+            if (inputPin == null) return;
 
-        if (typeChoice == 3) {
-            System.out.println("Account creation cancelled.");
-            return;
+            if (inputPin.matches("\\d{4}")) {
+                pin = inputPin;
+            } else {
+                System.out.println("Invalid PIN! Please enter exactly 4 digits.");
+            }
         }
 
-        String accountType = (typeChoice == 1) ? "SAVINGS" : "CURRENT";
+        String accountType = null;
+        while (accountType == null) {
+            String inputType = getStringInputWithBack("Enter account type (SAVINGS/CHECKING): ");
+            if (inputType == null) return;
 
-        System.out.print("Enter initial deposit amount: ");
-        double initialDeposit = getValidDoubleInput();
-
-        if (initialDeposit < 0) {
-            System.out.println("Initial deposit cannot be negative!");
-            return;
+            inputType = inputType.toUpperCase();
+            if (inputType.equals("SAVINGS") || inputType.equals("CHECKING")) {
+                accountType = inputType;
+            } else {
+                System.out.println("Invalid account type! Please enter SAVINGS or CHECKING.");
+            }
         }
 
-        String accountNumber = bankingSystem.createCustomer(name, password, accountType, initialDeposit);
+        Double initialDeposit = getDoubleInputWithBack("Enter initial deposit amount: $");
+        if (initialDeposit == null) return;
+
+        String accountNumber = bankingSystem.createCustomer(name, pin, accountType, initialDeposit);
+
         if (accountNumber != null) {
-            System.out.println("Account created successfully! Account Number: " + accountNumber);
-        } else {
-            System.out.println("Failed to create account!");
+            System.out.println("\n" + "=".repeat(50));
+            System.out.println("ACCOUNT CREATED SUCCESSFULLY!");
+            System.out.println("Account Number: " + accountNumber);
+            System.out.println("Customer Name: " + name);
+            System.out.println("PIN: " + pin);
+            System.out.println("Account Type: " + accountType);
+            System.out.println("Initial Balance: $" + String.format("%.2f", initialDeposit));
+            System.out.println("=".repeat(50));
         }
     }
 
-    private static void deleteCustomerAccount() {
-        System.out.print("Enter account number to delete: ");
-        String accountNumber = scanner.nextLine();
+    private static void adminDeleteAccount() {
+        System.out.println("\n=== DELETE CUSTOMER ACCOUNT ===");
+        System.out.println("(Type 'back' to return to admin menu)");
 
-        System.out.println("Are you sure you want to delete this account?");
-        System.out.println("1. Yes, delete account");
-        System.out.println("2. No, cancel");
-        System.out.print("Choice: ");
-        int confirmation = getValidIntInput();
+        String accountNumber = getStringInputWithBack("Enter account number to delete: ");
+        if (accountNumber == null) return;
 
-        if (confirmation != 1) {
-            System.out.println("Account deletion cancelled.");
-            return;
-        }
+        String confirmation = getStringInputWithBack("Are you sure you want to delete this account? (yes/no): ");
+        if (confirmation == null) return;
 
-        if (bankingSystem.deleteCustomer(accountNumber)) {
-            System.out.println("Account deleted successfully!");
+        if (confirmation.equalsIgnoreCase("yes")) {
+            if (bankingSystem.deleteCustomer(accountNumber)) {
+                System.out.println("Account deleted successfully!");
+            } else {
+                System.out.println("Account not found!");
+            }
         } else {
-            System.out.println("Account not found or deletion failed!");
+            System.out.println("Delete operation cancelled.");
         }
     }
 
-    private static void toggleAccountStatus() {
-        System.out.print("Enter account number: ");
-        String accountNumber = scanner.nextLine();
+    private static void adminToggleStatus() {
+        System.out.println("\n=== TOGGLE ACCOUNT STATUS ===");
+        System.out.println("(Type 'back' to return to admin menu)");
+
+        String accountNumber = getStringInputWithBack("Enter account number: ");
+        if (accountNumber == null) return;
 
         if (bankingSystem.toggleAccountStatus(accountNumber)) {
-            System.out.println("Account status updated successfully!");
+            System.out.println("Account status toggled successfully!");
         } else {
             System.out.println("Account not found!");
         }
     }
 
-    private static void customerMenu() {
+    private static void adminViewTransactionHistory() {
+        System.out.println("\n=== VIEW CUSTOMER TRANSACTION HISTORY ===");
+        System.out.println("(Type 'back' to return to admin menu)");
+
+        String accountNumber = getStringInputWithBack("Enter account number: ");
+        if (accountNumber == null) return;
+
+        bankingSystem.viewTransactionHistory(accountNumber);
+    }
+
+    private static void showSystemStatistics() {
+        System.out.println("\n=== SYSTEM STATISTICS ===");
+        // This would require additional methods in BankingSystem
+        System.out.println("System statistics feature coming soon!");
+        System.out.println("Current available features:");
+        System.out.println("- View all customers");
+        System.out.println("- View all transactions");
+        System.out.println("- Account management");
+    }
+
+    private static void customerInterface() {
         while (true) {
-            System.out.println("\n=== CUSTOMER MENU ===");
-            System.out.println("1. Register New Account");
-            System.out.println("2. Login");
+            System.out.println("\n" + "=".repeat(40));
+            System.out.println("        CUSTOMER INTERFACE");
+            System.out.println("=".repeat(40));
+            System.out.println("1. Create New Account");
+            System.out.println("2. Login to Existing Account");
             System.out.println("3. Back to Main Menu");
-            System.out.print("Choose an option: ");
+            System.out.println("=".repeat(40));
 
-            int choice = getValidIntInput();
+            int choice = getIntInput("Choose an option: ");
 
             switch (choice) {
                 case 1:
-                    customerRegistration();
+                    customerCreateAccount();
                     break;
                 case 2:
-                    customerLoginMenu();
+                    customerLogin();
                     break;
                 case 3:
                     return;
                 default:
-                    System.out.println("Invalid choice. Please try again.");
+                    System.out.println("Invalid option! Please try again.");
             }
         }
     }
 
-    private static void customerRegistration() {
-        System.out.print("Enter your name: ");
-        String name = scanner.nextLine();
+    private static void customerCreateAccount() {
+        System.out.println("\n=== CREATE NEW ACCOUNT ===");
+        System.out.println("(Type 'back' at any prompt to return to customer interface)");
 
-        System.out.print("Create a password: ");
-        String password = scanner.nextLine();
+        String name = getStringInputWithBack("Enter your full name: ");
+        if (name == null) return;
 
-        System.out.println("Select Account Type:");
-        System.out.println("1. Savings Account (Minimum deposit: $100)");
-        System.out.println("2. Current Account (Minimum deposit: $500)");
-        System.out.println("3. Cancel Registration");
-        System.out.print("Choice: ");
-        int typeChoice = getValidIntInput();
+        String pin = null;
+        while (pin == null) {
+            String inputPin = getStringInputWithBack("Create a 4-digit PIN: ");
+            if (inputPin == null) return;
 
-        if (typeChoice == 3) {
-            System.out.println("Registration cancelled.");
-            return;
+            if (inputPin.matches("\\d{4}")) {
+                String confirmPin = getStringInputWithBack("Confirm your PIN: ");
+                if (confirmPin == null) return;
+
+                if (inputPin.equals(confirmPin)) {
+                    pin = inputPin;
+                } else {
+                    System.out.println("PINs do not match! Please try again.");
+                }
+            } else {
+                System.out.println("Invalid PIN! Please enter exactly 4 digits.");
+            }
         }
 
-        String accountType = (typeChoice == 1) ? "SAVINGS" : "CURRENT";
-        double minDeposit = (typeChoice == 1) ? 100.0 : 500.0;
+        String accountType = null;
+        while (accountType == null) {
+            System.out.println("\nAccount Types:");
+            System.out.println("1. SAVINGS - Standard savings account");
+            System.out.println("2. CHECKING - Current account for daily transactions");
+            System.out.println("(Type 'back' to return to customer interface)");
 
-        System.out.print("Enter initial deposit amount ($" + minDeposit + " minimum): ");
-        double initialDeposit = getValidDoubleInput();
+            String typeInput = getStringInputWithBack("Choose account type (1-2): ");
+            if (typeInput == null) return;
 
-        if (initialDeposit < minDeposit) {
-            System.out.println("Initial deposit must be at least $" + minDeposit);
-            return;
+            try {
+                int typeChoice = Integer.parseInt(typeInput);
+                if (typeChoice == 1) {
+                    accountType = "SAVINGS";
+                } else if (typeChoice == 2) {
+                    accountType = "CHECKING";
+                } else {
+                    System.out.println("Invalid choice! Please select 1 or 2.");
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input! Please enter 1 or 2.");
+            }
         }
 
-        String accountNumber = bankingSystem.createCustomer(name, password, accountType, initialDeposit);
+        Double initialDeposit = null;
+        while (initialDeposit == null) {
+            Double inputDeposit = getDoubleInputWithBack("Enter initial deposit amount (minimum $50): $");
+            if (inputDeposit == null) return;
+
+            if (inputDeposit >= 50) {
+                initialDeposit = inputDeposit;
+            } else {
+                System.out.println("Minimum initial deposit is $50.00");
+            }
+        }
+
+        String accountNumber = bankingSystem.createCustomer(name, pin, accountType, initialDeposit);
+
         if (accountNumber != null) {
-            System.out.println("Registration successful! Your Account Number: " + accountNumber);
-            System.out.println("Please remember your account number for future logins.");
-        } else {
-            System.out.println("Registration failed!");
+            System.out.println("\n" + "=".repeat(60));
+            System.out.println("🎉 CONGRATULATIONS! ACCOUNT CREATED SUCCESSFULLY! 🎉");
+            System.out.println("=".repeat(60));
+            System.out.println("IMPORTANT: Please save these details securely:");
+            System.out.println("Account Number: " + accountNumber);
+            System.out.println("Account Holder: " + name);
+            System.out.println("Account Type: " + accountType);
+            System.out.println("Initial Balance: $" + String.format("%.2f", initialDeposit));
+            System.out.println("\n⚠️  SECURITY REMINDER:");
+            System.out.println("- Never share your PIN with anyone");
+            System.out.println("- Keep your account number confidential");
+            System.out.println("- Contact admin if you suspect unauthorized access");
+            System.out.println("=".repeat(60));
         }
     }
 
-    private static void customerLoginMenu() {
-        while (true) {
-            System.out.println("\n=== CUSTOMER LOGIN ===");
-            System.out.println("1. Login to Account");
-            System.out.println("2. Back to Customer Menu");
-            System.out.print("Choose an option: ");
+    private static void customerLogin() {
+        System.out.println("\n=== CUSTOMER LOGIN ===");
+        System.out.println("(Type 'back' at any prompt to return to customer interface)");
 
-            int choice = getValidIntInput();
+        String accountNumber = getStringInputWithBack("Enter your account number: ");
+        if (accountNumber == null) return;
 
-            switch (choice) {
-                case 1:
-                    performCustomerLogin();
-                    return; // Return after login attempt (success or failure)
-                case 2:
-                    return;
-                default:
-                    System.out.println("Invalid choice. Please try again.");
-            }
-        }
-    }
+        String pin = getStringInputWithBack("Enter your PIN: ");
+        if (pin == null) return;
 
-    private static void performCustomerLogin() {
-        System.out.print("Enter account number: ");
-        String accountNumber = scanner.nextLine();
+        Customer customer = bankingSystem.customerLogin(accountNumber, pin);
 
-        System.out.print("Enter password: ");
-        String password = scanner.nextLine();
-
-        Customer customer = bankingSystem.customerLogin(accountNumber, password);
         if (customer != null) {
-            customerDashboard(customer);
-        } else {
-            System.out.println("Invalid account number or password!");
+            customerMenu(accountNumber, pin, customer);
         }
     }
 
-    private static void customerDashboard(Customer customer) {
+    private static void customerMenu(String accountNumber, String pin, Customer customer) {
         while (true) {
-            System.out.println("\n=== CUSTOMER DASHBOARD ===");
+            System.out.println("\n" + "=".repeat(50));
             System.out.println("Welcome, " + customer.getName() + "!");
-            System.out.println("Account: " + customer.getAccount().getAccountNumber());
-            System.out.println("Balance: $" + String.format("%.2f", customer.getAccount().getBalance()));
-            System.out.println();
-            System.out.println("1. Deposit Money");
-            System.out.println("2. Withdraw Money");
-            System.out.println("3. Transfer Money");
-            System.out.println("4. View Account Details");
-            System.out.println("5. View Transaction History");
-            System.out.println("6. Logout");
-            System.out.print("Choose an option: ");
+            System.out.println("Account: " + accountNumber);
+            System.out.println("=".repeat(50));
+            System.out.println("1. Check Balance");
+            System.out.println("2. Deposit Money");
+            System.out.println("3. Withdraw Money");
+            System.out.println("4. Transfer Money");
+            System.out.println("5. View Recent Transactions (Last 5)");
+            System.out.println("6. View All Transaction History");
+            System.out.println("7. Account Information");
+            System.out.println("8. Logout");
+            System.out.println("=".repeat(50));
 
-            int choice = getValidIntInput();
+            int choice = getIntInput("Choose an option: ");
 
             switch (choice) {
                 case 1:
-                    depositMoneyMenu(customer);
+                    bankingSystem.checkBalance(accountNumber, pin);
                     break;
                 case 2:
-                    withdrawMoneyMenu(customer);
+                    customerDeposit(accountNumber, pin);
                     break;
                 case 3:
-                    transferMoneyMenu(customer);
+                    customerWithdraw(accountNumber, pin);
                     break;
                 case 4:
-                    viewAccountDetails(customer);
+                    customerTransfer(accountNumber, pin);
                     break;
                 case 5:
-                    viewTransactionHistory(customer);
+                    bankingSystem.viewRecentTransactions(accountNumber, pin, 5);
                     break;
                 case 6:
-                    System.out.println("Logged out successfully!");
-                    return;
-                default:
-                    System.out.println("Invalid choice. Please try again.");
-            }
-        }
-    }
-
-    private static void depositMoneyMenu(Customer customer) {
-        while (true) {
-            System.out.println("\n=== DEPOSIT MONEY ===");
-            System.out.println("Current Balance: $" + String.format("%.2f", customer.getAccount().getBalance()));
-            System.out.println("1. Make Deposit");
-            System.out.println("2. Back to Dashboard");
-            System.out.print("Choose an option: ");
-
-            int choice = getValidIntInput();
-
-            switch (choice) {
-                case 1:
-                    System.out.print("Enter deposit amount: $");
-                    double amount = getValidDoubleInput();
-
-                    if (amount <= 0) {
-                        System.out.println("Deposit amount must be positive!");
-                        break;
-                    }
-
-                    if (bankingSystem.deposit(customer.getAccount().getAccountNumber(), amount)) {
-                        System.out.println("Deposit successful! New balance: $" +
-                                String.format("%.2f", customer.getAccount().getBalance()));
-                        return; // Return to dashboard after successful deposit
-                    } else {
-                        System.out.println("Deposit failed!");
-                    }
+                    bankingSystem.viewTransactionHistory(accountNumber);
                     break;
-                case 2:
-                    return;
-                default:
-                    System.out.println("Invalid choice. Please try again.");
-            }
-        }
-    }
-
-    private static void withdrawMoneyMenu(Customer customer) {
-        while (true) {
-            System.out.println("\n=== WITHDRAW MONEY ===");
-            System.out.println("Current Balance: $" + String.format("%.2f", customer.getAccount().getBalance()));
-            System.out.println("1. Make Withdrawal");
-            System.out.println("2. Back to Dashboard");
-            System.out.print("Choose an option: ");
-
-            int choice = getValidIntInput();
-
-            switch (choice) {
-                case 1:
-                    System.out.print("Enter withdrawal amount: $");
-                    double amount = getValidDoubleInput();
-
-                    if (amount <= 0) {
-                        System.out.println("Withdrawal amount must be positive!");
-                        break;
-                    }
-
-                    if (bankingSystem.withdraw(customer.getAccount().getAccountNumber(), amount)) {
-                        System.out.println("Withdrawal successful! New balance: $" +
-                                String.format("%.2f", customer.getAccount().getBalance()));
-                        return; // Return to dashboard after successful withdrawal
-                    } else {
-                        System.out.println("Withdrawal failed! Insufficient balance or account suspended.");
-                    }
+                case 7:
+                    showAccountInfo(customer);
                     break;
-                case 2:
+                case 8:
+                    System.out.println("Thank you for using CvSU Banking System!");
+                    System.out.println("Logged out successfully. Stay safe!");
                     return;
                 default:
-                    System.out.println("Invalid choice. Please try again.");
+                    System.out.println("Invalid option! Please try again.");
             }
         }
     }
 
-    private static void transferMoneyMenu(Customer customer) {
-        while (true) {
-            System.out.println("\n=== TRANSFER MONEY ===");
-            System.out.println("Current Balance: $" + String.format("%.2f", customer.getAccount().getBalance()));
-            System.out.println("1. Make Transfer");
-            System.out.println("2. Back to Dashboard");
-            System.out.print("Choose an option: ");
+    private static void customerDeposit(String accountNumber, String pin) {
+        System.out.println("\n=== DEPOSIT MONEY ===");
+        System.out.println("(Type 'back' to return to customer menu)");
 
-            int choice = getValidIntInput();
+        Double amount = getDoubleInputWithBack("Enter deposit amount: $");
+        if (amount == null) return;
 
-            switch (choice) {
-                case 1:
-                    System.out.print("Enter recipient account number: ");
-                    String toAccount = scanner.nextLine();
+        if (amount <= 0) {
+            System.out.println("Invalid amount! Deposit amount must be positive.");
+            return;
+        }
 
-                    System.out.print("Enter transfer amount: $");
-                    double amount = getValidDoubleInput();
+        bankingSystem.deposit(accountNumber, pin, amount);
+    }
 
-                    if (amount <= 0) {
-                        System.out.println("Transfer amount must be positive!");
-                        break;
-                    }
+    private static void customerWithdraw(String accountNumber, String pin) {
+        System.out.println("\n=== WITHDRAW MONEY ===");
+        System.out.println("(Type 'back' to return to customer menu)");
 
-                    if (bankingSystem.transfer(customer.getAccount().getAccountNumber(), toAccount, amount)) {
-                        System.out.println("Transfer successful! New balance: $" +
-                                String.format("%.2f", customer.getAccount().getBalance()));
-                        return; // Return to dashboard after successful transfer
-                    } else {
-                        System.out.println("Transfer failed! Check recipient account or insufficient balance.");
-                    }
-                    break;
-                case 2:
-                    return;
-                default:
-                    System.out.println("Invalid choice. Please try again.");
-            }
+        // First show current balance
+        System.out.println("Checking your current balance...");
+        bankingSystem.checkBalance(accountNumber, pin);
+
+        Double amount = getDoubleInputWithBack("\nEnter withdrawal amount: $");
+        if (amount == null) return;
+
+        if (amount <= 0) {
+            System.out.println("Invalid amount! Withdrawal amount must be positive.");
+            return;
+        }
+
+        bankingSystem.withdraw(accountNumber, pin, amount);
+    }
+
+    private static void customerTransfer(String accountNumber, String pin) {
+        System.out.println("\n=== TRANSFER MONEY ===");
+        System.out.println("(Type 'back' at any prompt to return to customer menu)");
+
+        // Show current balance first
+        System.out.println("Your current balance:");
+        bankingSystem.checkBalance(accountNumber, pin);
+
+        String toAccount = getStringInputWithBack("\nEnter destination account number: ");
+        if (toAccount == null) return;
+
+        if (toAccount.equals(accountNumber)) {
+            System.out.println("Cannot transfer to the same account!");
+            return;
+        }
+
+        Double amount = getDoubleInputWithBack("Enter transfer amount: $");
+        if (amount == null) return;
+
+        if (amount <= 0) {
+            System.out.println("Invalid amount! Transfer amount must be positive.");
+            return;
+        }
+
+        String confirmation = getStringInputWithBack("Confirm transfer of $" + String.format("%.2f", amount) +
+                " to account " + toAccount + "? (yes/no): ");
+        if (confirmation == null) return;
+
+        if (confirmation.equalsIgnoreCase("yes")) {
+            bankingSystem.transfer(accountNumber, pin, toAccount, amount);
+        } else {
+            System.out.println("Transfer cancelled.");
         }
     }
 
-    private static void viewAccountDetails(Customer customer) {
+    private static void showAccountInfo(Customer customer) {
+        System.out.println("\n=== ACCOUNT INFORMATION ===");
         Account account = customer.getAccount();
-        System.out.println("\n=== ACCOUNT DETAILS ===");
         System.out.println("Account Number: " + account.getAccountNumber());
         System.out.println("Account Holder: " + customer.getName());
         System.out.println("Account Type: " + account.getAccountType());
-        System.out.println("Balance: $" + String.format("%.2f", account.getBalance()));
-        System.out.println("Status: " + (account.isActive() ? "Active" : "Suspended"));
-        System.out.println("Created: " + account.getCreatedDate());
-
-        System.out.println("\nPress Enter to continue...");
-        scanner.nextLine();
+        System.out.println("Current Balance: $" + String.format("%.2f", account.getBalance()));
+        System.out.println("Account Status: " + (account.isActive() ? "Active" : "Suspended"));
+        System.out.println("=".repeat(40));
     }
 
-    private static void viewTransactionHistory(Customer customer) {
-        System.out.println("\n=== TRANSACTION HISTORY ===");
-        bankingSystem.viewTransactionHistory(customer.getAccount().getAccountNumber());
-
-        System.out.println("\nPress Enter to continue...");
-        scanner.nextLine();
+    // New utility methods for input handling with back option
+    private static String getStringInputWithBack(String prompt) {
+        System.out.print(prompt);
+        String input = scanner.nextLine().trim();
+        if (input.equalsIgnoreCase("back")) {
+            System.out.println("Returning to previous menu...");
+            return null;
+        }
+        return input;
     }
 
-    private static int getValidIntInput() {
+    private static Double getDoubleInputWithBack(String prompt) {
         while (true) {
+            String input = getStringInputWithBack(prompt);
+            if (input == null) return null; // User chose to go back
+
             try {
-                int input = scanner.nextInt();
-                scanner.nextLine(); // consume newline
-                return input;
-            } catch (InputMismatchException e) {
-                System.out.print("Please enter a valid number: ");
-                scanner.nextLine(); // clear invalid input
+                return Double.parseDouble(input);
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input! Please enter a valid amount or 'back' to return.");
             }
         }
     }
 
-    private static double getValidDoubleInput() {
+    // Original utility methods for input handling (still used in menus)
+    private static int getIntInput(String prompt) {
         while (true) {
             try {
-                double input = scanner.nextDouble();
-                scanner.nextLine(); // consume newline
-                return input;
-            } catch (InputMismatchException e) {
-                System.out.print("Please enter a valid amount: ");
-                scanner.nextLine(); // clear invalid input
+                System.out.print(prompt);
+                int value = Integer.parseInt(scanner.nextLine());
+                return value;
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input! Please enter a valid number.");
+            }
+        }
+    }
+
+    private static double getDoubleInput(String prompt) {
+        while (true) {
+            try {
+                System.out.print(prompt);
+                double value = Double.parseDouble(scanner.nextLine());
+                return value;
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input! Please enter a valid amount.");
             }
         }
     }

@@ -1,108 +1,49 @@
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-
 public class Account {
     private String accountNumber;
-    private String customerName;
-    private String accountType; // SAVINGS or CURRENT
+    private String accountHolderName;
+    private String accountType;
     private double balance;
     private boolean isActive;
-    private LocalDateTime createdDate;
-    private double interestRate;
-    private LocalDateTime lastInterestCalculation;
 
-    public Account(String accountNumber, String customerName, String accountType, double initialBalance) {
+    public Account(String accountNumber, String accountHolderName, String accountType, double initialBalance) {
         this.accountNumber = accountNumber;
-        this.customerName = customerName;
-        this.accountType = accountType.toUpperCase();
-        this.balance = initialBalance;
-        this.isActive = true;
-        this.createdDate = LocalDateTime.now();
-        this.lastInterestCalculation = LocalDateTime.now();
-
-        // Set interest rate based on account type
-        if ("SAVINGS".equals(this.accountType)) {
-            this.interestRate = 0.03; // 3% annual interest for savings
-        } else {
-            this.interestRate = 0.01; // 1% annual interest for current accounts
-        }
-    }
-
-    // Constructor for loading from file
-    public Account(String accountNumber, String customerName, String accountType,
-                   double balance, boolean isActive, LocalDateTime createdDate,
-                   double interestRate, LocalDateTime lastInterestCalculation) {
-        this.accountNumber = accountNumber;
-        this.customerName = customerName;
+        this.accountHolderName = accountHolderName;
         this.accountType = accountType;
-        this.balance = balance;
-        this.isActive = isActive;
-        this.createdDate = createdDate;
-        this.interestRate = interestRate;
-        this.lastInterestCalculation = lastInterestCalculation;
+        this.balance = initialBalance;
+        this.isActive = true; // Account is active by default
     }
 
-    public synchronized void deposit(double amount) {
-        if (amount > 0 && isActive) {
-            balance += amount;
-            calculateInterest();
+    // Deposit money
+    public void deposit(double amount) {
+        if (amount > 0) {
+            this.balance += amount;
         }
     }
 
-    public synchronized boolean withdraw(double amount) {
-        if (!isActive) {
-            return false;
-        }
-
-        if (amount > 0 && balance >= amount) {
-            // Check minimum balance requirements
-            double minBalance = getMinimumBalance();
-            if (balance - amount >= minBalance) {
-                balance -= amount;
-                calculateInterest();
-                return true;
-            } else {
-                System.out.println("Insufficient balance. Minimum balance required: $" + minBalance);
-                return false;
-            }
+    // Withdraw money
+    public boolean withdraw(double amount) {
+        if (amount > 0 && amount <= this.balance) {
+            this.balance -= amount;
+            return true;
         }
         return false;
     }
 
-    private double getMinimumBalance() {
-        // Savings accounts require $50 minimum, Current accounts require $100 minimum
-        return "SAVINGS".equals(accountType) ? 50.0 : 100.0;
-    }
-
-    public void calculateInterest() {
-        if ("SAVINGS".equals(accountType)) {
-            LocalDateTime now = LocalDateTime.now();
-            long monthsSinceLastCalculation = java.time.temporal.ChronoUnit.MONTHS.between(
-                    lastInterestCalculation, now);
-
-            if (monthsSinceLastCalculation >= 1) {
-                double monthlyInterest = balance * (interestRate / 12) * monthsSinceLastCalculation;
-                balance += monthlyInterest;
-                lastInterestCalculation = now;
-
-                if (monthlyInterest > 0) {
-                    System.out.println("Interest added: $" + String.format("%.2f", monthlyInterest));
-                }
-            }
-        }
-    }
-
-    // Getters and setters
+    // Getters and Setters
     public String getAccountNumber() {
         return accountNumber;
     }
 
-    public String getCustomerName() {
-        return customerName;
+    public void setAccountNumber(String accountNumber) {
+        this.accountNumber = accountNumber;
     }
 
-    public void setCustomerName(String customerName) {
-        this.customerName = customerName;
+    public String getAccountHolderName() {
+        return accountHolderName;
+    }
+
+    public void setAccountHolderName(String accountHolderName) {
+        this.accountHolderName = accountHolderName;
     }
 
     public String getAccountType() {
@@ -110,11 +51,10 @@ public class Account {
     }
 
     public void setAccountType(String accountType) {
-        this.accountType = accountType.toUpperCase();
+        this.accountType = accountType;
     }
 
     public double getBalance() {
-        calculateInterest(); // Always calculate latest interest before returning balance
         return balance;
     }
 
@@ -130,33 +70,14 @@ public class Account {
         isActive = active;
     }
 
-    public LocalDateTime getCreatedDate() {
-        return createdDate;
-    }
-
-    public void setCreatedDate(LocalDateTime createdDate) {
-        this.createdDate = createdDate;
-    }
-
-    public double getInterestRate() {
-        return interestRate;
-    }
-
-    public void setInterestRate(double interestRate) {
-        this.interestRate = interestRate;
-    }
-
-    public LocalDateTime getLastInterestCalculation() {
-        return lastInterestCalculation;
-    }
-
-    public void setLastInterestCalculation(LocalDateTime lastInterestCalculation) {
-        this.lastInterestCalculation = lastInterestCalculation;
-    }
-
     @Override
     public String toString() {
-        return String.format("Account{number='%s', type='%s', balance=%.2f, active=%s}",
-                accountNumber, accountType, balance, isActive);
+        return "Account{" +
+                "accountNumber='" + accountNumber + '\'' +
+                ", accountHolderName='" + accountHolderName + '\'' +
+                ", accountType='" + accountType + '\'' +
+                ", balance=" + balance +
+                ", isActive=" + isActive +
+                '}';
     }
 }

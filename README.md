@@ -1,222 +1,237 @@
-# Java Banking System
+# CvSU Banking System
 
-A comprehensive banking system implemented in Java with full functionality for account management, transactions, and data persistence.
+A comprehensive console-based banking system developed in Java. This system provides both administrative and customer interfaces for managing bank accounts and transactions.
 
-🏗️ Project Structure
+## Features
 
+### Admin Features
+- **Admin Authentication**: Secure admin login with password protection
+- **Customer Management**: Create, view, and delete customer accounts
+- **Account Status Control**: Activate or suspend customer accounts
+- **Transaction Monitoring**: View all transactions across the system
+- **Customer Transaction History**: View individual customer transaction records
+- **System Statistics**: Overview of banking operations
 
-```
-BankingSystem/
-├── Main.java                 # Entry point and user interface
-├── BankingSystem.java        # Core banking operations
-├── Customer.java             # Customer model with authentication
-├── Account.java              # Account model with balance management
-├── Transaction.java          # Transaction model
-├── AccountService.java       # Account management service
-├── TransactionService.java   # Transaction management service
-├── FileManager.java          # File-based data persistence
-└── data/                     # Data storage directory
-    ├── customers.txt         # Customer and account data
-    └── transactions.txt      # Transaction history
-🚀 Features
-```
+### Customer Features
+- **Account Creation**: Self-service account registration
+- **Secure Login**: PIN-based authentication system
+- **Balance Inquiry**: Check current account balance
+- **Deposit Operations**: Add money to accounts
+- **Withdrawal Operations**: Withdraw money with balance validation
+- **Money Transfer**: Transfer funds between accounts
+- **Transaction History**: View recent and complete transaction records
+- **Account Information**: View account details and status
 
-Admin Features
-- **Secure Login**: Admin authentication with password protection
-- **Customer Management**: Create, view, delete, and suspend customer accounts
-- **Account Oversight**: View all accounts and their details
-- **Transaction Monitoring**: View complete transaction history across all accounts
-- **Account Status Control**: Suspend or activate customer accounts
+### Account Types
+- **Savings Account**: Standard savings account for long-term deposits
+- **Checking Account**: Current account for daily transactions
 
-Customer Features
-- **Account Registration**: Self-registration with account type selection
-- **Secure Login**: Password-protected authentication with account lockout protection
-- **Banking Operations**:
-  - Deposit money
-  - Withdraw money (with minimum balance checks)
-  - Transfer funds between accounts
-- **Account Management**:
-  - View account details and balance
-  - View complete transaction history
-- **Security**: Account lockout after 3 failed login attempts
+## System Architecture
 
-Account Types
-1. **Savings Account**
-   - Minimum balance: $50
-   - Interest rate: 3% annually
-   - Minimum initial deposit: $100
-   - Automatic interest calculation
+### Core Classes
 
-2. **Current Account**
-   - Minimum balance: $100
-   - Interest rate: 1% annually
-   - Minimum initial deposit: $500
-   - Business-oriented features
+- **Main.java**: Entry point and user interface management
+- **BankingSystem.java**: Core business logic and system operations
+- **Customer.java**: Customer entity with PIN validation
+- **Account.java**: Account entity with balance operations
+- **Transaction.java**: Transaction records with timestamps
+- **TransactionService.java**: Transaction management and filtering
+- **AccountService.java**: Account validation utilities
+- **FileManager.java**: Data persistence and file operations
 
-🛠️ Technical Features
+## Technical Specifications
 
-Security
-- **Password Hashing**: SHA-256 encryption for all passwords
-- **Account Lockout**: Automatic lockout after 3 failed login attempts
-- **Input Validation**: Comprehensive validation for all user inputs
-- **Session Management**: Secure login/logout functionality
-
-Data Management
-- **File Persistence**: Data stored in text files for persistence across sessions
-- **Backup System**: Automatic data backup functionality
-- **Data Integrity**: Error handling and data validation
-- **CSV Export**: Export account data to CSV format
-
-Transaction Management
-- **Unique Transaction IDs**: Auto-generated unique identifiers
-- **Transaction History**: Complete audit trail of all operations
-- **Transaction Types**: Deposit, Withdrawal, Transfer In/Out
-- **Balance Tracking**: Real-time balance updates
-
-📋 How to Run
-
-Prerequisites
+### Requirements
 - Java 8 or higher
-- Command line access
+- Console/Terminal environment
+- File system access for data persistence
 
-Compilation
-```bash
-javac *.java
+### Data Storage
+- **customers.txt**: Customer and account information
+- **transactions.txt**: Transaction history records
+- Automatic backup functionality available
+
+### Security Features
+- 4-digit PIN authentication for customers
+- Admin password protection
+- Account suspension capabilities
+- Transaction validation and verification
+
+## Installation & Setup
+
+1. **Clone or Download** the project files
+2. **Compile** all Java files:
+   ```bash
+   javac *.java
+   ```
+3. **Run** the application:
+   ```bash
+   java Main
+   ```
+
+## Usage Guide
+
+### Starting the System
+When you run the application, you'll see the main menu:
+```
+==================================================
+    WELCOME TO ************
+           BANKING SYSTEM
+==================================================
+1. Admin Login
+2. Customer Interface
+3. Exit
 ```
 
-Execution
-```bash
-java Main
-```
+### Admin Access
+- Default admin password: `admin123`
+- Admin can manage all customer accounts and view system-wide data
 
-🎯 Usage Guide
+### Customer Registration
+1. Select "Customer Interface" from main menu
+2. Choose "Create New Account"
+3. Provide required information:
+   - Full name
+   - 4-digit PIN (must be exactly 4 digits)
+   - Account type (Savings or Checking)
+   - Initial deposit (minimum $50)
 
-Admin Access
-1. Select "Admin Login" from the main menu
-2. Enter admin password: `admin123`
-3. Use admin features to manage the banking system
+### Customer Login
+1. Enter your account number (format: ACC + timestamp)
+2. Enter your 4-digit PIN
+3. Access your account dashboard
 
-Customer Registration
-1. Select "Customer Menu" → "Register New Account"
-2. Provide personal information and choose account type
-3. Make initial deposit (minimum $100 for Savings, $500 for Current)
-4. Remember your account number for future logins
-
-Customer Login
-1. Select "Customer Menu" → "Login"
-2. Enter your account number and password
-3. Access your personal banking dashboard
-
-Banking Operations
-- **Deposit**: Add money to your account
-- **Withdraw**: Remove money (subject to minimum balance)
-- **Transfer**: Send money to another account
-- **View Details**: Check account information and balance
-- **Transaction History**: Review all past transactions
-
-🔧 Configuration
-
-Admin Password
-Default admin password is `admin123`. To change it, modify the `ADMIN_PASSWORD` constant in `BankingSystem.java`.
-
-Interest Rates
-- Savings accounts: 3% annual (modifiable in `Account.java`)
-- Current accounts: 1% annual (modifiable in `Account.java`)
-
-Minimum Balances
-- Savings accounts: $50 minimum
-- Current accounts: $100 minimum
-
-File Locations
-- Customer data: `data/customers.txt`
-- Transaction data: `data/transactions.txt`
-- Backups: `data/backup_[timestamp]/`
-
-📊 Data Format
-
-Customer Data Format
+## File Structure
 
 ```
-Name|PasswordHash|AccountNumber|AccountType|Balance|Active|CreatedDate|InterestRate|LastInterestCalc|FailedAttempts|Locked
+banking-system/
+├── Main.java              # Main application entry point
+├── BankingSystem.java     # Core banking operations
+├── Customer.java          # Customer entity
+├── Account.java           # Account entity
+├── Transaction.java       # Transaction entity
+├── TransactionService.java # Transaction management
+├── AccountService.java    # Account utilities
+├── FileManager.java       # Data persistence
+├── customers.txt          # Customer data (auto-generated)
+├── transactions.txt       # Transaction data (auto-generated)
+└── README.md             # This file
 ```
 
-Transaction Data Format
+## Key Features Explained
 
-```
-TransactionID|AccountNumber|Type|Amount|Timestamp|Description|BalanceAfter
-```
+### Account Number Generation
+- Format: `ACC` + timestamp
+- Ensures unique account numbers
+- Example: `ACC1640995200000`
 
-🛡️ Security Considerations
+### PIN Security
+- Must be exactly 4 digits
+- Stored as plain text (for educational purposes)
+- Validated on every transaction
 
-1. **Password Security**: All passwords are hashed using SHA-256
-2. **Account Lockout**: Prevents brute force attacks
-3. **Input Validation**: Prevents invalid data entry
-4. **Session Management**: Secure login/logout process
-5. **Data Integrity**: Error handling and validation
+### Transaction Types
+- **DEPOSIT**: Cash deposits
+- **WITHDRAWAL**: Cash withdrawals
+- **TRANSFER_OUT**: Outgoing transfers
+- **TRANSFER_IN**: Incoming transfers
 
-🚨 Error Handling
+### Data Persistence
+- Automatic saving after each operation
+- Pipe-delimited format for easy parsing
+- Backup functionality available
+
+## Error Handling
 
 The system includes comprehensive error handling for:
-- Invalid input data
+- Invalid PIN formats
+- Insufficient funds
+- Non-existent accounts
+- Suspended accounts
+- Invalid transaction amounts
 - File I/O operations
-- Mathematical operations
-- Authentication failures
-- Account status issues
 
-📈 Future Enhancements
+## Sample Operations
 
-Potential improvements that could be added:
-- GUI interface using JavaFX or Swing
-- Database integration (MySQL, PostgreSQL)
-- Network capabilities for remote access
-- Advanced reporting and analytics
-- Mobile app integration
+### Creating an Account
+```
+Enter your full name: John Doe
+Create a 4-digit PIN: 1234
+Choose account type: 1 (Savings)
+Enter initial deposit: 100.00
+```
+
+### Making a Transfer
+```
+Enter destination account number: ACC1640995300000
+Enter transfer amount: 50.00
+Current balance: $100.00
+New balance: $50.00
+```
+
+## Limitations
+
+- Console-based interface only
+- Single-user session at a time
+- Basic security implementation
+- No network connectivity
+- File-based storage only
+
+## Future Enhancements
+
+- GUI interface
+- Database integration
+- Multi-user support
+- Enhanced security with encryption
+- Online banking features
+- Card/ATM integration
+- Interest calculation
+- Account statements
 - Email notifications
-- Loan management system
-- Credit/debit card integration
 
-🐛 Troubleshooting
+## Troubleshooting
 
-Common Issues
+### Common Issues
 
-1. **Data directory not found**
-   - Solution: The system automatically creates the data directory
+1. **"Invalid PIN" Error**
+   - Ensure PIN is exactly 4 digits
+   - No letters or special characters allowed
 
-2. **Account locked**
-   - Solution: Contact admin to unlock the account
+2. **"Account Suspended" Message**
+   - Contact admin to reactivate account
+   - Admin can toggle account status
 
-3. **Insufficient balance**
-   - Solution: Ensure account has sufficient funds above minimum balance
+3. **File Not Found Errors**
+   - System will create data files automatically
+   - Ensure write permissions in directory
 
-4. **File permission errors**
-   - Solution: Ensure write permissions for the data directory
+4. **Transaction Failures**
+   - Check account balance before withdrawals
+   - Verify destination account exists for transfers
 
-📝 Testing
+## Developer Notes
 
-Test Scenarios
+### Code Structure
+- Object-oriented design principles
+- Separation of concerns
+- Modular architecture
+- Clean code practices
 
-1. **Admin Functions**
-   - Login with correct/incorrect password
-   - Create various account types
-   - View all customers and transactions
-   - Suspend/activate accounts
+### Testing
+- Manual testing through console interface
+- Test various scenarios (valid/invalid inputs)
+- Verify data persistence
+- Check transaction integrity
 
-2. **Customer Functions**
-   - Register new accounts
-   - Login with valid/invalid credentials
-   - Perform banking operations
-   - View account details and history
+## License
 
-3. **Edge Cases**
-   - Minimum balance violations
-   - Transfer to non-existent accounts
-   - Negative amounts
-   - Account lockout scenarios
+This project is developed for educational purposes.
 
-📄 License
+## Support
 
-This project is created for educational purposes. Feel free to use and modify as needed.
+For technical support or questions about the banking system, please contact the development team or refer to the system documentation.
 
 ---
 
-**Note**: This banking system is designed for educational and demonstration purposes. For production use, additional security measures and professional auditing would be required.
+
+*Secure • Reliable • User-Friendly*
